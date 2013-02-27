@@ -392,10 +392,13 @@ void set_HOD_params()
       if(OUTPUT) fprintf(stderr,"SOFT_CENTRAL_CUTOFF Delta-n %d %e\n",SOFT_CENTRAL_CUTOFF,
 			 fixfunc1(log10(HOD.M_min)));
       HOD.M_low = -1;
-      if(SOFT_CENTRAL_CUTOFF)
-	HOD.M_low = exp(zbrent(func_mlow,log(HOD.M_min)-5*HOD.sigma_logM*2.3,
-			       log(HOD.M_min),1.0E-5));
-      else
+      if(SOFT_CENTRAL_CUTOFF) {
+	//HOD.M_low = exp(zbrent(func_mlow,log(HOD.M_min)-5*HOD.sigma_logM*2.3,
+	//		       log(HOD.M_min),1.0E-5));
+	HOD.M_low = HOD.M_min/2.;
+	while(N_cen(HOD.M_low) > 0.01)
+	  HOD.M_low /= 2.;
+      } else
 	HOD.M_low = HOD.M_min;
       if(HOD.M_low<1.0E7)HOD.M_low=1.0E+7;
       if(OUTPUT) {
