@@ -370,6 +370,7 @@ void set_HOD_params()
   if(HOD.M_min>0 && HOD.M1>0)
     {
       HOD.M_low = -1;
+      if (wp.ngal==0) wp.ngal = GALAXY_DENSITY;
       if(SOFT_CENTRAL_CUTOFF)
 	HOD.M_low0 = HOD.M_low = exp(zbrent(func_mlow,log(HOD.M_min*1.0E-6),log(HOD.M_min*1.1),1.0E-5));
       else

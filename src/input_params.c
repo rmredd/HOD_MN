@@ -626,6 +626,7 @@ void read_parameter_file(char *fname)
       fprintf(stderr,"HOD.M1= %e\n",HOD.M1);
     }
 
+
   /* SCale the M_max value by OMEGA_M=0.3
    */
   /*
@@ -870,12 +871,17 @@ void read_parameter_file(char *fname)
    */
   MSTAR=mstar();
 
+  //printf("NGALS xp %e\n",GALAXY_DENSITY);
+
   ctemp = HOD.color; 
   if(Task.wp_minimize)
     HOD.color = 0;
+  wp.ngal=0;
   set_HOD_params();
   HOD.color = ctemp;
   if(XCORR)set_HOD2_params();
+
+  //printf("NGALS xx %e %e\n",GALAXY_DENSITY,wp.ngal);
 
 #undef DOUBLE 
 #undef STRING 

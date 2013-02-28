@@ -186,6 +186,7 @@ void wp_minimization(char *fname)
   if(OUTPUT)printf("wp_min> Number of free parameters: %d\n",n);
 
   printf("FNAME %s\n",Task.root_filename);
+  printf("NGALS init: %e\n",GALAXY_DENSITY);
   wp_input();
   //Read input M2N data if needed
   if(Task.m2n_minimize)
@@ -221,7 +222,9 @@ void wp_minimization(char *fname)
   s1=qromo(func_galaxy_bias,log(HOD.M_low),log(HOD.M_max),midpnt);
   GALAXY_BIAS=s1/GALAXY_DENSITY;
 
-  printf("POWELL %e %e ",chi2min,HOD.M_min);
+  printf("POWELL %e ",chi2min);
+  if(FIX_PARAM>0) printf("%e ",HOD.M_min);
+  if(FIX_PARAM==0) printf("%e ",GALAXY_DENSITY);
   for(i=1;i<=n;++i)printf("%e ",a[i]);
   printf(" %f\n",GALAXY_BIAS);
 
@@ -235,7 +238,9 @@ void wp_minimization(char *fname)
   printf("FNAME2 %s\n",Task.root_filename);
   sprintf(aa,"%s.fit",Task.root_filename);
   fp=fopen(aa,"w");
-  fprintf(fp,"%e %e ",chi2min,HOD.M_min);
+  fprintf(fp,"%e ",chi2min,HOD.M_min);
+  if(FIX_PARAM>0) fprintf(fp, "%e ",HOD.M_min);
+  if(FIX_PARAM==0) fprintf(fp, "%e ",GALAXY_DENSITY);
   for(i=1;i<=n;++i)fprintf(fp,"%e ",a[i]);
   fprintf(fp," %f\n",GALAXY_BIAS);
   fclose(fp);
@@ -299,7 +304,7 @@ double chi2_wp(double *a)
     }
 
   t0 = clock();
-  if(HOD.free[1])FIX_PARAM = 0;
+  if(HOD.free[1] || HOD.free[0])FIX_PARAM = 0;
 
   wp.iter=niter;
 
@@ -483,6 +488,8 @@ double chi2_wp(double *a)
   if(XCORR)
     set_HOD2_params();
 
+  //default to zero in order to add safely elsewhere
+  chi2ngal = 0;
   if(HOD.free[0])
     {
       chi2ngal = (GALAXY_DENSITY-wp.ngal)*(GALAXY_DENSITY-wp.ngal)/wp.ngal_err/wp.ngal_err;
@@ -922,6 +929,19 @@ void wp_input()
 	/* printf("COVAR %d %d %e\n",i,j,wp.covar[i][j]); */
       }
   fclose(fp);
+
+  // Add ngal, ngal_err if GALAXY_DENSITY is allowed to move
+  // wp.ngal should be set by set_HOD_params
+  if (HOD.free[0]) {
+    if(wp.ngal == 0) wp.ngal = GALAXY_DENSITY;
+    if(GALDENS_ERR==0) {
+      wp.ngal_err = 0.1*GALAXY_DENSITY;
+    } else {
+      wp.ngal_err = GALDENS_ERR;
+    }
+    FIX_PARAM=0;
+  }
+
   if(!ThisTask)
     fprintf(stdout,"Done reading %d lines from [%s]\n",wp.np,wp.fname_covar);
 

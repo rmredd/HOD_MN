@@ -134,8 +134,12 @@ void mcmc_minimization()
 
   if(HOD.free[0])
     {
-      wp.ngal = GALAXY_DENSITY;
-      wp.ngal_err = 0.1*wp.ngal;
+      if(wp.ngal==0) wp.ngal = GALAXY_DENSITY;
+      if(GALDENS_ERR==0) {
+	wp.ngal_err = 0.1*wp.ngal;
+      } else {
+	wp.ngal_err = GALDENS_ERR;
+      }
       FIX_PARAM = 0;
     }
 
