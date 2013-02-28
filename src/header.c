@@ -20,6 +20,8 @@ double GAMMA=0.2,         /* Shape parameter of EBW power spectrum */
   MSTAR,                  /* Mass scale at which sigm(M) = DELTA_CRIT */
   GALAXY_DENSITY,         /* Number density of galaxies (Mpc/h)^-3 */
   GALAXY_DENSITY2,        /* Number density of SECOND SET of galaxies (Mpc/h)^-3 (for x-corr)*/
+  GALDENS_ERR=0,          /* Number density error, set to zero for when density is fixed */
+  GALDENS_ERR2=0,         /* Number density error of SECOND SET of galaxies */
   GRAVITY,                /* Newton's constant in internal units. */
   BOX_SIZE,               /* Size of box, if comparing to simulations. */
   RESOLUTION,             /* Simulations: BOX_SIZE/np^(1/3) */

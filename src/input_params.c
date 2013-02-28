@@ -225,6 +225,10 @@ void read_parameter_file(char *fname)
   addr[nt]=&GALAXY_DENSITY2;
   id[nt++]=DOUBLE;
 
+  strcpy(tag[nt],"GALDENS_ERR2");
+  addr[nt]=&GALDENS_ERR2;
+  id[nt++]=DOUBLE;
+
   strcpy(tag[nt],"HOD2.M1");
   addr[nt]=&HOD2.M1;
   id[nt++]=DOUBLE;
@@ -303,6 +307,10 @@ void read_parameter_file(char *fname)
     
   strcpy(tag[nt],"GALAXY_DENSITY");
   addr[nt]=&GALAXY_DENSITY;
+  id[nt++]=DOUBLE;
+
+  strcpy(tag[nt],"GALDENS_ERR");
+  addr[nt]=&GALDENS_ERR;
   id[nt++]=DOUBLE;
 
   strcpy(tag[nt],"EXCLUSION");
@@ -644,6 +652,7 @@ void read_parameter_file(char *fname)
       if(!strcmp(tag[i],"HOD2.alpha1") && HOD2.pdfs!=4 && HOD2.pdfs!=5)continue;
       if(!strcmp(tag[i],"HOD2.M_sat_break") && HOD2.pdfs!=4 && HOD2.pdfs!=5)continue;
       if(!strcmp(tag[i],"GALAXY_DENSITY2") && !XCORR)continue;
+      if(!strcmp(tag[i],"GALDENS_ERR2") && !XCORR)continue;
       if(!strcmp(tag[i],"XCORR"))continue;
 
       if(!strcmp(tag[i],"alpha1"))continue;
@@ -800,7 +809,7 @@ void read_parameter_file(char *fname)
       if(!strcmp(tag[i],"mn_fname_covar"))
     {
         if(Task.m2n_minimize) {
-            fprintf(stderr,"No filename specified for m2n data.\n");
+            fprintf(stderr,"No filename specified for m2n covariance matrix.\n");
             errorFlag=1;
         }
         continue;

@@ -246,6 +246,8 @@ extern double
   MSTAR,
   GALAXY_DENSITY,
   GALAXY_DENSITY2,
+  GALDENS_ERR, //added variable to get number density error as input
+  GALDENS_ERR2,
   NG_ONE_HALO,
   GRAVITY,
   VZ_LIMIT,
