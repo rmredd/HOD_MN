@@ -1,1 +1,16 @@
 This is a general description file for HOD_MN.
+
+How to run with various options:
+
+===Galaxy Number Density===
+
+To run with galaxy number density free to move, set M_min>0 and free[0] to 1.  Fits 
+will then assume that the error on the number density is 10% of the number density.
+  Otherwise, set GALDENS_ERR to the error on the number density.  Typical values 
+are around 1% or so for 3e-4 (Mpc/h)^-3 in a (640 Mpc/h)^3 box.
+
+To run with galaxy number fixed, set free[0]=0, free[1]=0 and M_min=0.  M_min will 
+be adjusted given the other parameters to maintain a fixed number density.  
+WARNING:  This occasionally leads to bad behavior, when, e.g., M_min has limited 
+effect on the HOD, or when an odd number density/HOD combination requires a very 
+high or very low M_min.
