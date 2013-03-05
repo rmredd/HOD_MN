@@ -652,6 +652,7 @@ void read_parameter_file(char *fname)
       if(!strcmp(tag[i],"HOD2.alpha") && !XCORR)continue;
       if(!strcmp(tag[i],"HOD2.alpha1") && HOD2.pdfs!=4 && HOD2.pdfs!=5)continue;
       if(!strcmp(tag[i],"HOD2.M_sat_break") && HOD2.pdfs!=4 && HOD2.pdfs!=5)continue;
+      if(!strcmp(tag[i],"GALDENS_ERR")) continue;
       if(!strcmp(tag[i],"GALAXY_DENSITY2") && !XCORR)continue;
       if(!strcmp(tag[i],"GALDENS_ERR2") && !XCORR)continue;
       if(!strcmp(tag[i],"XCORR"))continue;

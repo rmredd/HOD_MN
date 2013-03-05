@@ -160,7 +160,7 @@ double func_wp_matter(double z)
 void wp_minimization(char *fname)
 {
   int n,niter,i,j;
-  double *a,**pp,*yy,FTOL=1.0E-3,chi2min,s1,dlogm,m;
+  double *a,**pp,*yy,FTOL=1.0E-3,chi2min,chi2ngal,s1,dlogm,m;
   FILE *fp;
   char aa[1000];
 
@@ -255,8 +255,10 @@ void wp_minimization(char *fname)
     }
   fclose(fp);
   
-  fprintf(stderr,"Chi2: %e Chi2(M/N only): %e Chi2(wp only): %e\n",chi2min,chi2_m2n_mass(a),
-	chi2min-chi2_m2n_mass(a));
+  chi2ngal = 0;
+  if (wp.ngal_err > 0) chi2ngal = (GALAXY_DENSITY-wp.ngal)*(GALAXY_DENSITY-wp.ngal)/wp.ngal_err/wp.ngal_err;
+  fprintf(stderr,"Chi2: %e Chi2(M/N only): %e Chi2(wp only): %e Chi2 n: %e\n",chi2min,chi2_m2n_mass(a),
+	  chi2min-chi2_m2n_mass(a)-chi2ngal,chi2ngal);
 
   fprintf(stderr,"here\n");
   free_dvector(a,1,n);
