@@ -116,6 +116,20 @@ double N_cen(double m)
     if(x<0) return 0.;
     return x;
     break;
+  case 13:  //Alternative general variant that fits Emeralda better
+    if (m <= HOD.M_cen_lin) {
+      x = 0.5*(1+erf((log10(m) - log10(HOD.M_min))/HOD.sigma_logM))*HOD.MaxCen;
+    } else {
+      double a, k;
+      k = 0.5*(1+erf((log10(HOD.M_cen_lin) - log10(HOD.M_min))/HOD.sigma_logM));
+      a = 1./HOD.sigma_logM/k/sqrt(PI)/log(10)*
+	exp(-log10(HOD.M_cen_lin/HOD.M_min)*log10(HOD.M_cen_lin/HOD.M_min)
+	    /HOD.sigma_logM/HOD.sigma_logM);
+      x = k*HOD.MaxCen*pow(m/HOD.M_cen_lin,a);
+    }
+    if(x>1) return 1;
+    return x;
+    break;
 
   case 101: 
     if(m<HOD.M_min)return 0;
@@ -357,7 +371,7 @@ void set_HOD_params()
       fprintf(stderr,"NEW M_max= %e\n",HOD.M_max);
     }
 
-  if(HOD.pdfc == 2 || HOD.pdfc == 3 || HOD.pdfc == 6 || HOD.pdfc == 8 || HOD.pdfc == 9 || HOD.pdfc == 12)
+  if(HOD.pdfc == 2 || HOD.pdfc == 3 || HOD.pdfc == 6 || HOD.pdfc == 8 || HOD.pdfc == 9 || HOD.pdfc == 12 || HOD.pdfc == 13)
     SOFT_CENTRAL_CUTOFF=1;
 
   /* Error trap both the galaxy density and M_min both left unspecified.
@@ -375,6 +389,11 @@ void set_HOD_params()
 	HOD.M_low0 = HOD.M_low = exp(zbrent(func_mlow,log(HOD.M_min*1.0E-6),log(HOD.M_min*1.1),1.0E-5));
       else
 	HOD.M_low0 = HOD.M_low = HOD.M_min;
+
+      if(HOD.M_low > HOD.M1 ) {
+	while(N_cen(HOD.M_low) > 0.01) HOD.M_low /= 2.;
+      }
+
       GALAXY_DENSITY=qromo(func_galaxy_density,log(HOD.M_low),log(HOD.M_max),midpnt);
       if(OUTPUT) {
 	fprintf(stdout,"M_low= %e\n",HOD.M_low);
