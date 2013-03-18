@@ -130,7 +130,12 @@ double N_cen(double m)
     if(x>1) return 1;
     return x;
     break;
-
+  case 14:  //variant for testing with a sharp cutoff in mass but Ncen!=1
+    if (m <= HOD.M_min) return 0;
+    x = HOD.MaxCen*pow(m/HOD.M_min,HOD.M_cen_lin);
+    if (x > 1) return 1;
+    return x;
+    break;
   case 101: 
     if(m<HOD.M_min)return 0;
     x = pow(m/HOD.M1,HOD.alpha);

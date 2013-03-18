@@ -186,7 +186,7 @@ void wp_minimization(char *fname)
   if(OUTPUT)printf("wp_min> Number of free parameters: %d\n",n);
 
   printf("FNAME %s\n",Task.root_filename);
-  printf("NGALS init: %e\n",GALAXY_DENSITY);
+  printf("NGALS init: %e %e\n",GALAXY_DENSITY,wp.ngal);
   wp_input();
   //Read input M2N data if needed
   if(Task.m2n_minimize)
@@ -355,7 +355,7 @@ double chi2_wp(double *a)
 
   if(HOD.pdfc!=9) {
     if(HOD.free[++i])CVIR_FAC=a[++j];
-    if(HOD.pdfc>=7 && HOD.pdfc != 12 && HOD.pdfc != 13) {
+    if(HOD.pdfc>=7 && HOD.pdfc != 12 && HOD.pdfc != 13 && HOD.pdfc != 14) {
       if(HOD.free[++i])HOD.M_cen_max=a[++j]; }
     else {
       if(HOD.free[++i])HOD.MaxCen=a[++j]; }
@@ -392,7 +392,7 @@ double chi2_wp(double *a)
     
     if(HOD2.pdfc!=9) {
       if(HOD.free[++i])CVIR_FAC=a[++j];
-      if(HOD2.pdfc>=7 && HOD.pdfc != 12 && HOD.pdfc != 13) {
+      if(HOD2.pdfc>=7 && HOD.pdfc != 12 && HOD.pdfc != 13 && HOD.pdfc != 14) {
 	if(HOD2.free[++i])HOD2.M_cen_max=a[++j]; }
       else {
 	if(HOD2.free[++i])HOD2.MaxCen=a[++j]; }
@@ -740,7 +740,7 @@ void initial_wp_values(double *a, double **pp, double *yy)
     if(HOD.free[++i])a[++j]=HOD.M_cut;
     if(HOD.free[++i])a[++j]=HOD.sigma_logM;
     if(HOD.free[++i])a[++j]=CVIR_FAC;
-    if(HOD.pdfc>=7 && HOD.pdfc != 12 && HOD.pdfc != 13){
+    if(HOD.pdfc>=7 && HOD.pdfc != 12 && HOD.pdfc != 13 && HOD.pdfc != 14){
       if(HOD.free[++i])a[++j]=HOD.M_cen_max; }
     else {
       if(HOD.free[++i])a[++j]=HOD.MaxCen; }
@@ -774,7 +774,7 @@ void initial_wp_values(double *a, double **pp, double *yy)
       if(HOD.free[++i])a[++j]=HOD2.M_cut;
       if(HOD.free[++i])a[++j]=HOD2.sigma_logM;
       if(HOD.free[++i])a[++j]=CVIR_FAC;
-      if(HOD2.pdfc>=7 && HOD.pdfc != 12 && HOD.pdfc != 13){
+      if(HOD2.pdfc>=7 && HOD.pdfc != 12 && HOD.pdfc != 13 && HOD.pdfc != 14){
 	if(HOD.free[++i])a[++j]=HOD2.M_cen_max; }
       else {
 	if(HOD.free[++i])a[++j]=HOD2.MaxCen; }
