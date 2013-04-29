@@ -399,6 +399,8 @@ void set_HOD_params()
 	while(N_cen(HOD.M_low) > 0.01) HOD.M_low /= 2.;
       }
 
+      //if(HOD.M_low < HOD.M_min/100.) HOD.M_low = HOD.M_min/100.;
+
       GALAXY_DENSITY=qromo(func_galaxy_density,log(HOD.M_low),log(HOD.M_max),midpnt);
       if(OUTPUT) {
 	fprintf(stdout,"M_low= %e\n",HOD.M_low);
