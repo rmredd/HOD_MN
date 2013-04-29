@@ -9,6 +9,7 @@ double func_cvir1(double a);
 double func_cvir2(double a);
 double cvir_2pop(double mass, float K, double delta, double *mdelta);
 double c200c_maccio(double mass, int iwmap, double delta, double *mdelta);
+double cvir_prada(double mass, double *mdelta);
 
 double collapse_redshift(double z);
 double cvir_pnorm_g1,
@@ -50,6 +51,13 @@ double halo_concentration(double m)
       dm=(log(HOD.M_max)-log(1.0E8))/(n-1);
       for(i=1;i<=n;++i)
 	{
+	  //Below is for the Prada model
+	  x[i] = exp((i-1)*dm+log(1.0E8));
+	  y[i] = cvir_prada(x[i],&m1);
+	  x[i] = log(m1);
+	  y[i] = log(y[i]);
+	  continue;
+
 	  // below is one of our models
 	  x[i]=exp((i-1)*dm+log(1.0E8));
 	  y[i]=cvir_2pop(x[i],0,DELTA_HALO,&m1);
