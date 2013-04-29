@@ -5,8 +5,8 @@
 
 
 /* This is a routine which takes a virial mass (as defined by the virial
- * overdensity relation (see fitting formula of Bryan & Normax)
- * and converts if to a mass of some given overdensity. This is all
+ * overdensity relation (see fitting formula of Bryan & Norman)
+ * and converts it to a mass of some given overdensity. This is all
  * taken from the appendix of Hu & Kravtsov. 2003ApJ...584..702H
  */
 

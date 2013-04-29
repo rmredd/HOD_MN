@@ -324,3 +324,46 @@ double c200c_maccio(double mass, int iwmap, double delta, double *mdelta)
   return cdelta;
 }
 
+
+//cvir model implemented based on Prada et al 2012 parameterization
+//As currently implemented, assumes flat cosmology --RMR
+double cvir_prada(double mass, double *mdelta) {
+  
+  double x=pow(OMEGA_M/(1.-OMEGA_M),1./3.); //Assuming flat cosmology
+  double c0, c1, alpha, x0, sig_inv_0, sig_inv_1, beta, x1;
+  double c_min, sig_inv_min;
+  double B_0, B_1, rad, sig_p;
+  double A, b, c, d, C_sig_p;
+  double cvir;
+
+  c0 = 3.681;
+  c1 = 5.033;
+  alpha = 6.948;
+  sig_inv_0 = 1.047;
+  sig_inv_1 = 1.646;
+  beta = 7.386;
+  x1 = 0.526;
+
+  c_min = c0 + (c1-c0)*(1./PI*atan(alpha*(x-x0))+0.5);
+  sig_inv_min = sig_inv_0 + (sig_inv_1-sig_inv_0)*(1./PI*atan(beta*(x-x1))+0.5);
+
+  B_0 = c_min/(c0 + (c1-c0)*(1./PI*atan(alpha*(1.393-x0))+0.5));
+  B_1 = sig_inv_min/(sig_inv_0 + (sig_inv_1-sig_inv_0)*(1./PI*atan(beta*(1.393-x1))+0.5));
+
+  //Get radius value for getting sigma value
+  rad=pow(3.0*mass/(4.0*PI*OMEGA_M*RHO_CRIT),1.0/3.0);
+  sig_p = B_1*sigmac(rad);
+
+  A = 2.881;
+  b = 1.257;
+  c = 1.022;
+  d = 0.060;
+
+  C_sig_p = A*(pow(sig_p/b,c)+1)*exp(d/(sig_p*sig_p));
+  cvir = B_0*C_sig_p;
+
+  //Do the necessary conversion to DELTA_HALO defined masses and concentrations
+  *mdelta = halo_mass_conversion(mass,&cvir,DELTA_HALO);
+
+  return cvir;
+}
