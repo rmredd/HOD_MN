@@ -360,7 +360,7 @@ double cvir_prada(double mass, double *mdelta) {
 
   //Get radius value for getting sigma value
   rad=pow(3.0*mass/(4.0*PI*OMEGA_M*RHO_CRIT),1.0/3.0);
-  sig_p = B_1*sigmac(rad);
+  sig_p = B_1*sigmac(rad)*SIGMA_8/sigmac(8.0); //includes normalization, which seems needed
 
   A = 2.881;
   b = 1.257;
@@ -369,6 +369,7 @@ double cvir_prada(double mass, double *mdelta) {
 
   C_sig_p = A*(pow(sig_p/b,c)+1)*exp(d/(sig_p*sig_p));
   cvir = B_0*C_sig_p;
+  //fprintf(stderr,"%e %e %f %f %e %e %e\n",mass,cvir,C_sig_p,sig_p,rad,sigmac(rad),sigmac(8.0));
 
   //Do the necessary conversion to DELTA_HALO defined masses and concentrations
   *mdelta = halo_mass_conversion(mass,&cvir,DELTA_HALO);
