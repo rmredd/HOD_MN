@@ -612,6 +612,7 @@ double chi2_wp(double *a)
 
   if(COVAR)
     {
+      //fprintf(stderr,"TEST CHI2: ");
       for(i=1;i<=wp.np;++i)
 	for(j=1;j<=wp.np;++j)
 	  {
@@ -625,7 +626,9 @@ double chi2_wp(double *a)
 	      printf("CHIWP %d %e %e %e %e\n",
 		     niter+1,wp.r[i],x[i],wp.x[i],wp.e[j]);
 	    */
+	    //fprintf(stderr,"%d %d %f \n",i,j,chi2);
 	  }
+      fprintf(stderr,"COVAR: %e\n", wp.covar[1][1]);
     }
   else
     {
@@ -650,6 +653,11 @@ double chi2_wp(double *a)
 	    }
 	}
     }
+
+  if(chi2 < 0) {
+    fprintf(stderr, "WTF, chi2 < 0: %f\n",chi2);
+    chi2 = 1e9;
+  }
 
       /* 
        * From Peder Norberg's instructions for use of PCA:
