@@ -511,7 +511,7 @@ void read_parameter_file(char *fname)
   addr[nt]=&wp.n_wp;
   id[nt++]=INT;
 
- strcpy(tag[nt],"root_filename");
+  strcpy(tag[nt],"root_filename");
   addr[nt]=&Task.root_filename;
   id[nt++]=STRING;
    
@@ -542,6 +542,22 @@ void read_parameter_file(char *fname)
   addr[nt]=&M2N_mass.filename;
   id[nt++]=STRING;
 
+  /* Input filename and parameters for w(theta) calculations
+   */
+  strcpy(tag[nt],"FIT_WTHETA");
+  addr[nt]=&FIT_WTHETA;
+  id[nt++]=INT;
+
+  strcpy(tag[nt],"fname_nz");
+  addr[nt]=&wp.fname_nz;
+  id[nt++]=STRING;
+  wp.np_nz=0;
+
+  strcpy(tag[nt],"angular_xi");
+  addr[nt]=&Task.angular_xi;
+  id[nt++]=INT;
+  Task.angular_xi = 0;
+  
   if((fd=fopen(fname,"r")))
     {
       nn=filesize(fd);

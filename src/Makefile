@@ -20,9 +20,9 @@ ifeq ($(errors),1)
 EXEC = HOD.x_err
 endif
 
-OBJ_DIR = ../obj/
+OBJ_DIR = ../obj
 
-OBJ_HOD = header.o main.o utility.o sigmac.o \
+OBJ_HOD = $(addprefix $(OBJ_DIR)/, header.o main.o utility.o sigmac.o \
 	transfnc.o transfunc_file.o \
 	nonlinear_power_spectrum.o least_squares.o test.o \
 	hod_functions.o \
@@ -52,22 +52,24 @@ OBJ_HOD = header.o main.o utility.o sigmac.o \
 	fit_scale_bias.o aspen_breakout.o mcmc_color.o \
 	populate_simulation_clf.o \
 	mass2number.o m2n_mcmc_combined.o \
-	wtheta.o drg_model.o mcmc_wtheta.o
+	wtheta.o drg_model.o mcmc_wtheta.o )
 
 
-OBJ_ERR = mcmc_with_errors.o halo_mass_function_error.o halo_bias_error.o
-OBJ_STD = mcmc.o halo_mass_function.o halo_bias.o
+OBJ_ERR = $(addprefix $(OBJ_DIR)/, mcmc_with_errors.o \
+	halo_mass_function_error.o \
+	halo_bias_error.o)
+OBJ_STD = $(addprefix $(OBJ_DIR)/, mcmc.o halo_mass_function.o halo_bias.o )
 
-OBJ_ML  = ml_minimization.o
+OBJ_ML  = $(addprefix $(OBJ_DIR)/, ml_minimization.o)
 
-OBJ_NR = nrutil.o qromo.o midpnt.o midinf.o \
+OBJ_NR = $(addprefix $(OBJ_DIR)/, nrutil.o qromo.o midpnt.o midinf.o \
 	polint.o splint.o spline.o \
 	zbrent.o qtrap.o trapzd.o cisi.o \
 	complex.o amoeba.o amotry.o \
 	gaussj.o powell.o linmin.o f1dim.o \
 	mnbrak.o brent.o gasdev.o \
 	ran1.o jacobi.o splin2.o splie2.o \
-	ran2.o sort2.o
+	ran2.o sort2.o )
 
 ifeq ($(errors),1)
 OBJS01 = $(OBJ_HOD) $(OBJ_NR) $(OBJ_ERR)
@@ -79,11 +81,8 @@ endif
 $(EXEC): $(OBJS01)
 	$(CC) -o $@ $(OBJS01) $(LIB)
 	mv *.x ..	
-	mv *.o $(OBJ_DIR)
-#	cp -f $@ $(HOME)/exec/$@
-$(OBJS01):	header.h nrutil.h complex.h
-	mv $(OBJ_DIR)/*.o .
-
+$(OBJ_DIR)/%.o: %.c header.h nrutil.h complex.h
+	$(CC) -c -o $@ $< $(LIB)
 
 OBJS11=	chi2_dist.o qromo.o midinf.o nrutil.o \
 	polint.o midpnt.o
@@ -92,5 +91,5 @@ chi2_dist:	$(OBJS11)
 
 
 clean:
-	rm -f *.o
 	rm -f $(OBJ_DIR)/*.o
+	rm -f *.o

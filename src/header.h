@@ -312,7 +312,8 @@ extern int RESET_COSMOLOGY,
   XCORR,
   RESTART,
   USE_ERRORS,
-  DENSITY_DEPENDENCE;
+  DENSITY_DEPENDENCE,
+  FIT_WTHETA; //Swith to fitting w(theta) from wp(rp)
 
 extern char RESTART_FILE[100];
 
@@ -559,6 +560,7 @@ extern struct perform_tasks {
   int massfunc;
   char root_filename[100];
   char mcmcfilename[200];  //Output file for the MCMC chain
+  int angular_xi; //flag for outputing w(theta)
 } Task;
 
 
@@ -611,4 +613,11 @@ struct WP {
   int n_wp;
   
   double fsat_all, fsat_red, fsat_blue;
+
+  //Parameters added if we're running with w(theta) -- RMR
+  double zmin, zmax;
+  int np_nz;
+  char fname_nz[200];
+  double *z;
+  double *nz;
 } wp;

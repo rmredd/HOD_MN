@@ -84,7 +84,8 @@ int ITRANS=4,             /* Type of transfer function to be used */
   XCORR=0,                /* flag for cross-correlation */  
   RESTART = 0,            /* For restarting an MCMC chain (ml only) */
   USE_ERRORS = 0,         /* Flag for using systematic errors on massfunc, bias, etc in MCMC */
-  DENSITY_DEPENDENCE = 0; /* Flag for den-dep HOD. */
+  DENSITY_DEPENDENCE = 0, /* Flag for den-dep HOD. */
+  FIT_WTHETA = 0;         /* Flag for using w(theta) in fits */
 
 /* Stuff for wtheta
  */

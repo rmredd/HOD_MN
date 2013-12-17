@@ -21,6 +21,85 @@ struct WTH {
   double rad, theta;
 } wth;
 
+/* Version of the w(theta) calculation
+   Note that this version is dependent on the wp struct from header.h having already had data put into it
+   --RMR
+ */
+double wtheta_fit(double theta) 
+{ double r1, r2, z1, z2, z;
+  
+  double rmin, rmax, dr, Deltar, pz, s1, zmin, zmax, rad, drdz, omega_temp, s2;
+  int nrad=200, i;
+
+  
+  static double *nquadri,*zquadri,*yquadri;
+  double dz1,dz2;
+  static int flag = 1, ntable;
+
+  // convert from degrees to radians!
+  theta *= PI/180.0;
+
+  //Sanity check -- if n(z) data doesn't exist, print a warning and return 0
+  if(wp.np_nz==0)
+    {
+      fprintf(stderr,"WARNING: No n(z) data, impossible to obtain w(theta)\n");
+      return 0;
+    }
+
+  // Set up the spline if necessary
+  if(flag)
+    {
+      flag = 0;
+      ntable = wp.np_nz;
+      zquadri = dvector(1,ntable);
+      nquadri = dvector(1,ntable);
+      yquadri = dvector(1,ntable);
+      
+      for(i=1;i<=ntable;++i)
+	{
+	  zquadri[i] = wp.z[i];
+	  nquadri[i] = log(wp.nz[i]);
+	}
+      spline(zquadri,nquadri,ntable,1.0E+30,1.0E+30,yquadri);
+    }
+
+  wth.theta = theta;
+  zmin = wp.zmin;
+  if (zmin < zquadri[1]) zmin = zquadri[1];
+  if (zmax > zquadri[ntable]) zmax = zquadri[ntable];
+  
+  rmin = distance_redshift(zmin);
+  rmax = distance_redshift(zmax);
+
+  //fmuh(OMEGA_M);
+
+  dr = (rmax - rmin)/nrad;
+  Deltar = rmax - rmin;
+
+  // truncating to 40 Mpc/h as a default -- may be input
+  Deltar = wp.pi_max;
+
+  pz = 1.0/(zmax - zmin);
+  pz *= pz;
+
+  s1 = s2 = 0;
+
+  for(i=0;i<nrad;++i)
+    {
+      rad = (i-0.5)*dr + rmin;
+      wth.rad = rad;
+      z = redshift_distance(rad);
+          
+      splint(zquadri,nquadri,yquadri,ntable,z,&pz);
+      pz = exp(pz)*exp(pz);
+
+      drdz = c_on_H0*c_on_H0/(OMEGA_M*(1+z)*(1+z)*(1+z)+(1-OMEGA_M));
+      s1 += 2*qromo(func_wth1,0.0,Deltar,midpnt)*pz/drdz*dr;
+      s2 += sqrt(pz/drdz)*dr;
+    }
+  return s1/s2/s2;
+}
+
 double wtheta(double theta)
 {
   double r1, r2, z1, z2, z;
