@@ -42,7 +42,6 @@ void tasks(int argc, char **argv)
     rphi,rshi,rslo,rplo,dlogm,m,sig;
   FILE *fp,*fp2,*fp1;
   char fname[100];
-
   
 
 
@@ -135,6 +134,53 @@ muh(Task.MCMC);
 	}
       fclose(fp);
       
+    }
+
+  /* This calculates and outputs the angular correlation function,
+   * and outputs it to a file.
+   * File columns are:
+   * 1 - theta (degrees)
+   * 2 - w(theta)
+   *
+   * Note that this also reads in the n(z) file if that hasn't been done
+   */
+  if(Task.angular_xi || Task.All)
+    {
+      fprintf(stderr,"\n\nCALCULATING ANGULAR CORRELATION FUNCTION.\n");
+      fprintf(stderr,    "--------------------------------------------\n\n");
+      
+      //First, check to see if the n(z) has already been read in, and, if
+      //not, read it in
+      if(wp.np_nz == 0) {
+	if(!(fp=fopen(wp.fname_nz,"r"))) {
+	  fprintf(stdout, "Error opening [%s]\n",wp.fname_nz);
+	  endrun("error in Task.angular_xi");
+	}
+	wp.np_nz=filesize(fp);
+	wp.z = dvector(1,wp.np_nz);
+	wp.nz = dvector(1,wp.np_nz);
+
+	for(i=1; i<=wp.np_nz; ++i); {
+	  fscanf(fp,"%e %e",&x1,&x2);
+	  wp.z[i] = x1;
+	  wp.nz[i] = x2;
+	}
+	fclose(fp);
+	fprintf(stderr,"Done reading %d lines from [%s]\n",wp.np_nz,wp.fname_nz);
+      }
+
+      sprintf(fname,"%s.wtheta",Task.root_filename);
+      fp = fopen(fname,"w");
+      dr = (log(100.)-log(0.01))/49.0; //This is actually dlntheta
+      for(i=0; i<50; ++i) {
+	r = exp(i*dr + log(0.01));
+	x1 = wtheta_fit(r);
+
+	fprintf(fp,"%f %e",r,x1);
+	fflush(fp);
+      }
+      fclose(fp);
+
     }
 	
   /* This runs the calculation of M/N from the HOD and outputs it to a file

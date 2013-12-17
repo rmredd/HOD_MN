@@ -796,7 +796,7 @@ void read_parameter_file(char *fname)
 
       //If we want to do w(theta), but there's no fname_nz, give up
       if(!strcmp(tag[i],"fname_nz")) {
-	if( (Task.angular_xi) || FIT_WTHETA ) {
+	if( (Task.angular_xi) || FIT_WTHETA || Task.All ) {
 	  fprintf(stderr,"No filename specified for n(z) data\n");
 	  errorFlag=1;
 	}
