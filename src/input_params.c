@@ -790,6 +790,18 @@ void read_parameter_file(char *fname)
       if(!strcmp(tag[i],"kaiser_xi"))continue;
       if(!strcmp(tag[i],"cvir"))continue;
       if(!strcmp(tag[i],"massfunc"))continue;
+      if(!strcmp(tag[i],"angular_xi"))continue;
+
+      if(!strcmp(tag[i],"FIT_WTHETA"))continue;
+
+      //If we want to do w(theta), but there's no fname_nz, give up
+      if(!strcmp(tag[i],"fname_nz")) {
+	if( (Task.angular_xi) || FIT_WTHETA ) {
+	  fprintf(stderr,"No filename specified for n(z) data\n");
+	  errorFlag=1;
+	}
+	continue;
+      }
 
       if(!strcmp(tag[i],"TF_file"))
 	{
