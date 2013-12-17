@@ -160,7 +160,9 @@ muh(Task.MCMC);
 	wp.z = dvector(1,wp.np_nz);
 	wp.nz = dvector(1,wp.np_nz);
 
-	for(i=1; i<=wp.np_nz; ++i); {
+	i=1;
+	fprintf(stderr,"Reading...\n");
+	for(i=1; i<=wp.np_nz; ++i) {
 	  fscanf(fp,"%e %e",&x1,&x2);
 	  wp.z[i] = x1;
 	  wp.nz[i] = x2;
@@ -170,6 +172,7 @@ muh(Task.MCMC);
 	wp.zmin = wp.z[1];
 	wp.zmax = wp.z[wp.np_nz];
 	fprintf(stderr,"Done reading %d lines from [%s]\n",wp.np_nz,wp.fname_nz);
+	fprintf(stderr,"%e %e\n",wp.z[1],wp.nz[1]);
       }
 
       sprintf(fname,"%s.wtheta",Task.root_filename);
@@ -179,7 +182,7 @@ muh(Task.MCMC);
 	r = exp(i*dr + log(0.01));
 	x1 = wtheta_fit(r);
 
-	fprintf(fp,"%f %e",r,x1);
+	fprintf(fp,"%f %f \n",r,x1);
 	fflush(fp);
       }
       fclose(fp);

@@ -24,7 +24,7 @@ HBIAS_D2	2.09
 % N-body simulation specifics
 %----------------------------------------------------------------------------
 
-REDSHIFT	0.05
+REDSHIFT	0.15
 DELTA_HALO	392.7
 BOX_SIZE		0		% Mpc/h
 RESOLUTION	0.375		% BOX_SIZE/Npart^(1/3)
@@ -91,24 +91,26 @@ free[21]		0	% HBIAS_D2
 
 All		0
 z_space_xi	0
-massfunc	1
-real_space_xi	1
+massfunc	0
+real_space_xi	0
 kaiser_xi	0
 matter_xi	0
 r_half		0
 multipoles	0
+angular_xi	1
 wp_minimize	0
 m2n_minimize	1	% Determines inclusion of M2N in fitting
-COVAR		1
-HOD		1
+COVAR		0
+HOD		0
 PVD		0
-root_filename	esmer_truth
+root_filename	wtheta_test
 populate_sim	0
 HaloFile		/home/tinker/LANL/WMAP/halo.WMAP.384
 %HaloFile		/home/tinker/LANL/halo.768
 
 fname_wp	wp_esmer.dat
 fname_covar	wp_esmer.covar
+fname_nz	nz_test.dat
 
 % Files and flags for M2N data and minimization
 %-------------------------------------------------------------------------------
