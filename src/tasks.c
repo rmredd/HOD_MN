@@ -166,6 +166,9 @@ muh(Task.MCMC);
 	  wp.nz[i] = x2;
 	}
 	fclose(fp);
+	//Set the zmin and zmax
+	wp.zmin = wp.z[1];
+	wp.zmax = wp.z[wp.np_nz];
 	fprintf(stderr,"Done reading %d lines from [%s]\n",wp.np_nz,wp.fname_nz);
       }
 
