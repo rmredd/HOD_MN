@@ -33,6 +33,8 @@ double func_msum(double);
 double func_nsatsum(double);
 double func_ntotsum(double);
 
+double wtheta_fit(double);
+
 void tasks(int argc, char **argv)
 {
   int i,j,nsize,ix,iy,nr,i1,i2,n;
@@ -177,12 +179,11 @@ muh(Task.MCMC);
 
       sprintf(fname,"%s.wtheta",Task.root_filename);
       fp = fopen(fname,"w");
-      dr = (log(100.)-log(0.01))/49.0; //This is actually dlntheta
+      dr = (log(10.)-log(0.001))/49.0; //This is actually dlntheta
       for(i=0; i<50; ++i) {
-	r = exp(i*dr + log(0.01));
-	x1 = wtheta_fit(r);
-
-	fprintf(fp,"%f %f \n",r,x1);
+	r = exp(i*dr + log(0.001));
+	dx1 = wtheta_fit(r);
+	fprintf(fp,"%f %f\n",r,dx1);
 	fflush(fp);
       }
       fclose(fp);

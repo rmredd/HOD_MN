@@ -28,7 +28,7 @@ struct WTH {
 double wtheta_fit(double theta) 
 { double r1, r2, z1, z2, z;
   
-  double rmin, rmax, dr, Deltar, pz, s1, zmin, zmax, rad, drdz, omega_temp, s2;
+  double rmin, rmax, dr, Deltar, pz, s1, zmin, zmax, rad, drdz, omega_temp, s2, w;
   int nrad=200, i;
 
   
@@ -65,6 +65,7 @@ double wtheta_fit(double theta)
 
   wth.theta = theta;
   zmin = wp.zmin;
+  zmax = wp.zmax;
   if (zmin < zquadri[1]) zmin = zquadri[1];
   if (zmax > zquadri[ntable]) zmax = zquadri[ntable];
   
@@ -97,7 +98,8 @@ double wtheta_fit(double theta)
       s1 += 2*qromo(func_wth1,0.0,Deltar,midpnt)*pz/drdz*dr;
       s2 += sqrt(pz/drdz)*dr;
     }
-  return s1/s2/s2;
+  w = s1/s2/s2;
+  return w;
 }
 
 double wtheta(double theta)
@@ -266,7 +268,7 @@ double redshift_distance(double r)
 
       for(i=1;i<=n;++i)
 	{
-	  redshift[i] = 1 + dz*(i-1);
+	  redshift[i] = dz*(i-1);
 	  rad[i] = distance_redshift(redshift[i]);
 	}
       spline(rad,redshift,n,1.0E+30,1.0E+30,yy);

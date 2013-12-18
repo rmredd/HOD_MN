@@ -223,7 +223,7 @@ double poisson_prob(int n, double nave);
 #define ROOT8    2.82842712475
 #define WORKBUF  1000
 #define LOGE_10  2.30258509
-#define c_on_H0  3000
+#define c_on_H0  3000.
 
 #define mabs(A)  ((A) < 0.0 ? -(A) : (A))
 #define cnint(x) ((x-floor(x)) < 0.5 ? floor(x) : ceil(x))
