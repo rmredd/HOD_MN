@@ -29,6 +29,9 @@ void initial_wp_values(double *a, double **pp, double *yy);
 void m2n_mass_input(void);
 double chi2_m2n_mass(double *a);
 
+//Making sure this function is correctly available
+double wtheta_fit(double);
+
 /* The two functions below calculate the projected correlation
  * function from the HOD real-space correlation function at 
  * the input value of r_p.
@@ -577,18 +580,25 @@ double chi2_wp(double *a)
   for(i=1;i<=wp.np;++i)
     {
       rhi = exp(dlogr)*rlo;
-      switch(DEPROJECTED) {
-      case 1:
-	x[i]=one_halo_real_space(wp.r[i])+two_halo_real_space(wp.r[i]);
-	break;
-      case 2:
-	x[i] = wtheta(wp.r[i]);
-	break;
-      case 3: case 0:
-	x[i]=projected_xi(wp.r[i]);      
-	if(wp.format==3)
-	  x[i]/=wp.r[i];
-	break;
+      if(Task.FIT_WTHETA==1) {
+	//Added separate section to call my version of w(theta).  I've left the other
+	//in for consistency, but I don't think it's as useful --RMR
+	x[i] = wtheta_fit(wp.r[i]);
+      } else {
+
+	switch(DEPROJECTED) {
+	case 1:
+	  x[i]=one_halo_real_space(wp.r[i])+two_halo_real_space(wp.r[i]);
+	  break;
+	case 2:
+	  x[i] = wtheta(wp.r[i]);
+	  break;
+	case 3: case 0:
+	  x[i]=projected_xi(wp.r[i]);      
+	  if(wp.format==3)
+	    x[i]/=wp.r[i];
+	  break;
+	}
       }
       if(OUTPUT && !ThisTask)
 	printf("WP%d %f %e %e %e %e\n",niter,wp.r[i],wp.x[i],x[i],rlo,rhi);
