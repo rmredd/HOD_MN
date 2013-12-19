@@ -837,6 +837,7 @@ void initial_wp_values(double *a, double **pp, double *yy)
  * - fname_wp    ->  r xi e_xi
  * - fname_covar ->  (i=1,np)(j=1,np) read(covar[i][j])
  *
+ * - fname_nz -> z n(z) [read if needed for w(theta) calculation]
  */
 void wp_input()
 {
@@ -954,6 +955,32 @@ void wp_input()
 
   if(!ThisTask)
     fprintf(stdout,"Done reading %d lines from [%s]\n",wp.np,wp.fname_covar);
+
+  //Part for reading in the n(z) data
+  //Only called if we're using w(theta) for fitting
+  if(Task.FIT_WTHETA==1) {
+    if(!(fp=fopen(wp.fname_nz,"r"))) {
+	fprintf(stdout, "Error opening [%s]\n",wp.fname_nz);
+	endrun("error in wp_input");
+      }
+    wp.np_nz = filesize(fp);
+    wp.z = dvector(1,wp.np_nz);
+    wp.nz = dvector(1,wp.np_nz);
+    
+    i=1;
+    for(i=1; i<=wp.np_nz; ++i) {
+      fscanf(fp,"%e %e",&x1,&x2);
+      wp.z[i] = x1;
+      wp.nz[i] = x2;
+    }
+    fclose(fp);
+    wp.zmin = wp.z[1];
+    wp.zmax = wp.z[wp.np_nz];
+
+    if(!ThisTask)
+      fprintf(stdout,"Done reading %d lines from [%s]\n",wp.np_nz,wp.fname_nz);
+
+  }
 
 }
 
