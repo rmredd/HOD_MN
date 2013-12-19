@@ -312,8 +312,7 @@ extern int RESET_COSMOLOGY,
   XCORR,
   RESTART,
   USE_ERRORS,
-  DENSITY_DEPENDENCE,
-  FIT_WTHETA; //Swith to fitting w(theta) from wp(rp)
+  DENSITY_DEPENDENCE;
 
 extern char RESTART_FILE[100];
 
@@ -561,6 +560,7 @@ extern struct perform_tasks {
   char root_filename[100];
   char mcmcfilename[200];  //Output file for the MCMC chain
   int angular_xi; //flag for outputing w(theta)
+  int FIT_WTHETA; //Swith to fitting w(theta) from wp(rp)
 } Task;
 
 

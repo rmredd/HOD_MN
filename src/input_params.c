@@ -545,8 +545,9 @@ void read_parameter_file(char *fname)
   /* Input filename and parameters for w(theta) calculations
    */
   strcpy(tag[nt],"FIT_WTHETA");
-  addr[nt]=&FIT_WTHETA;
+  addr[nt]=&Task.FIT_WTHETA;
   id[nt++]=INT;
+  Task.FIT_WTHETA=0;
 
   strcpy(tag[nt],"fname_nz");
   addr[nt]=&wp.fname_nz;
@@ -796,7 +797,7 @@ void read_parameter_file(char *fname)
 
       //If we want to do w(theta), but there's no fname_nz, give up
       if(!strcmp(tag[i],"fname_nz")) {
-	if( (Task.angular_xi) || FIT_WTHETA || Task.All ) {
+	if( (Task.angular_xi) || Task.FIT_WTHETA || Task.All ) {
 	  fprintf(stderr,"No filename specified for n(z) data\n");
 	  errorFlag=1;
 	}
