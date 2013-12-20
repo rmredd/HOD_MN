@@ -450,7 +450,7 @@ double chi2_wp(double *a)
       if(x1>GALAXY_DENSITY)return(1.0e7);
       HOD.M1=0;
     }
-    
+
   /* Check the make sure these are reasonable parameters
    * (Assuming that M_min is NOT a FREE parameter but is
    * calculated from the GALAXY_DENSITY.)
@@ -485,7 +485,7 @@ double chi2_wp(double *a)
 
   if(HOD.free[0] || HOD.free[1])
     GALAXY_DENSITY=0;
-    
+
   if(!HOD.color)
     set_HOD_params();
 	
@@ -493,11 +493,14 @@ double chi2_wp(double *a)
   if(XCORR)
     set_HOD2_params();
 
+  //fprintf(stderr,"I am testing 1 2 3...\n");
+
   //default to zero in order to add safely elsewhere
   chi2ngal = 0;
   if(HOD.free[0])
     {
       chi2ngal = (GALAXY_DENSITY-wp.ngal)*(GALAXY_DENSITY-wp.ngal)/wp.ngal_err/wp.ngal_err;
+      //fprintf(stderr,"chi2ngal: %f %f\n",chi2ngal,wp.ngal_err);
       if(chi2ngal>1.0E3)return(chi2ngal);
     }
 
@@ -507,7 +510,7 @@ double chi2_wp(double *a)
       return(1e7);
     }
     
-//    fprintf(stderr,"Still working...still working... %g %g\n",HOD.M_min,HOD.M1);
+  //fprintf(stderr,"Still working...still working... %g %g\n",HOD.M_min,HOD.M1);
 
   /* if(HOD.pdfs==3 && HOD.M_cut<HOD.M_low)return(1.1e7); */
   if(HOD.M_min>HOD.M1)return(1.0e7);
@@ -927,6 +930,18 @@ void wp_input()
   fclose(fp);
   fprintf(stderr,"Done reading %d lines from [%s]\n",wp.np,wp.fname_wp);
 
+  // Add ngal, ngal_err if GALAXY_DENSITY is allowed to move
+  // wp.ngal should be set by set_HOD_params
+  if (HOD.free[0]) {
+    if(wp.ngal == 0) wp.ngal = GALAXY_DENSITY;
+    if(GALDENS_ERR==0) {
+      wp.ngal_err = 0.1*GALAXY_DENSITY;
+    } else {
+      wp.ngal_err = GALDENS_ERR;
+    }
+    FIX_PARAM=0;
+  }
+
   if(!COVAR || PCA)
     return;
   /*
@@ -950,18 +965,6 @@ void wp_input()
 	/* printf("COVAR %d %d %e\n",i,j,wp.covar[i][j]); */
       }
   fclose(fp);
-
-  // Add ngal, ngal_err if GALAXY_DENSITY is allowed to move
-  // wp.ngal should be set by set_HOD_params
-  if (HOD.free[0]) {
-    if(wp.ngal == 0) wp.ngal = GALAXY_DENSITY;
-    if(GALDENS_ERR==0) {
-      wp.ngal_err = 0.1*GALAXY_DENSITY;
-    } else {
-      wp.ngal_err = GALDENS_ERR;
-    }
-    FIX_PARAM=0;
-  }
 
   if(!ThisTask)
     fprintf(stdout,"Done reading %d lines from [%s]\n",wp.np,wp.fname_covar);
