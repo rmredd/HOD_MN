@@ -942,8 +942,7 @@ void wp_input()
     FIX_PARAM=0;
   }
 
-  if(!COVAR || PCA)
-    return;
+  if(COVAR && !PCA) {
   /*
   if(wp.format==1)
     {
@@ -965,9 +964,10 @@ void wp_input()
 	/* printf("COVAR %d %d %e\n",i,j,wp.covar[i][j]); */
       }
   fclose(fp);
-
+  
   if(!ThisTask)
     fprintf(stdout,"Done reading %d lines from [%s]\n",wp.np,wp.fname_covar);
+  }
 
   //Part for reading in the n(z) data
   //Only called if we're using w(theta) for fitting
