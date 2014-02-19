@@ -1016,7 +1016,7 @@ void m2n_mass_input() {
   M2N_mass.ndata=filesize(fp);
   M2N_mass.type=Task.M2N_type;
 
-  if(M2N_mass.type==0) { M2N_mass.mass=dvector(1,M2N_mass.ndata); } else {
+  if(M2N_mass.type==0 || M2N_mass.type==2) { M2N_mass.mass=dvector(1,M2N_mass.ndata); } else {
 		M2N_mass.lorich=M2N_mass.mass=dvector(1,M2N_mass.ndata);
 		M2N_mass.hirich=M2N_mass.mass=dvector(1,M2N_mass.ndata);
 	}
@@ -1037,6 +1037,7 @@ void m2n_mass_input() {
 		M2N_mass.mass[i]=x1;
 		M2N_mass.m2n[i]=x2;
 		M2N_mass.err[i]=x3;
+	        //fprintf(stdout,"MNTEST: %f %f %f\n",M2N_mass.mass[i],M2N_mass.m2n[i],M2N_mass.err[i]);
 	} else {
 		fscanf(fp,"%f %f %f %f",&x1,&x2,&x3,&x4);
 		M2N_mass.lorich[i]=x1;
@@ -1164,9 +1165,10 @@ if(M2N_mass.type==0) {
 	}
  } else if (M2N_mass.type==2) {
   //All galaxies (cen+sat), mass as independent var
-  for(i=1;i<M2N_mass.ndata;i++) {
+  for(i=1;i<=M2N_mass.ndata;i++) {
 	x1 = pow(10.,M2N_mass.mass[i]);
 	x[i] = x1/(N_sat(x1)+N_cen(x1));
+	//fprintf(stderr,"M2N SUPERTEST: %d %f %f\n",i,M2N_mass.mass[i],x[i]);
   }
  } else if (M2N_mass.type==3) {
 //This version for richness (with scatter) and all galaxies
@@ -1193,7 +1195,7 @@ if(M2N_mass.type==0) {
     {
 	  x1 = (x[i]-M2N_mass.m2n[i])*(x[i]-M2N_mass.m2n[i])/(M2N_mass.err[i]*M2N_mass.err[i]);
 	  chi2+=x1;
-	  //fprintf(stderr,"ERR M2N test: %f %f %f %f\n",chi2,x[i],M2N_mass.m2n[i],M2N_mass.err[i]);
+	  //fprintf(stderr,"ERR M2N test: %f %f %f %f %f %f\n",chi2,x[i],M2N_mass.m2n[i],M2N_mass.err[i],M2N_mass.mass[i],pow(10.,M2N_mass.mass[i])/(N_cen(pow(10.,M2N_mass.mass[i]))+N_sat(pow(10.,M2N_mass.mass[i]))));
 	}
     return(chi2);
   }
