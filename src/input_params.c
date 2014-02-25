@@ -926,6 +926,9 @@ void read_parameter_file(char *fname)
   HOD.color = ctemp;
   if(XCORR)set_HOD2_params();
 
+  //Set to run with cosmology correction if redshifts are available
+  if(REDSHIFT_MIN >= 0 && REDSHIFT_MAX>REDSHIFT_MIN) GALDENS_CCORR=1;
+
   //printf("NGALS xx %e %e\n",GALAXY_DENSITY,wp.ngal);
 
 #undef DOUBLE 
