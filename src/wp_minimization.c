@@ -199,8 +199,9 @@ void wp_minimization(char *fname)
     rmin = distance_redshift(REDSHIFT_MIN);
     rmax = distance_redshift(REDSHIFT_MAX);    
     volume = 4*PI/3.*(rmax*rmax*rmax-rmin*rmin*rmin);
-    GALAXY_COUNT=GALAXY_DENSITY*volume;
-    GALCOUNT_ERR=GALDENS_ERR*volume;
+    printf("VOLUME: %e %e\n",volume,wp.ngal);
+    GALAXY_COUNT=wp.ngal*volume;
+    GALCOUNT_ERR=wp.ngal_err*volume;
   }
 
   //Read in the correlation data
@@ -515,6 +516,7 @@ double chi2_wp(double *a)
     rmin = distance_redshift(REDSHIFT_MIN);
     rmax = distance_redshift(REDSHIFT_MAX);  
     volume = 4*PI/3.*(rmax*rmax*rmax-rmin*rmin*rmin);
+    printf("VOLUME: %e\n",volume);
     wp.ngal = GALAXY_COUNT/volume;
     wp.ngal_err = GALCOUNT_ERR/volume;
   }
