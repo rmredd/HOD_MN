@@ -193,19 +193,20 @@ void wp_minimization(char *fname)
   printf("FNAME %s\n",Task.root_filename);
   printf("NGALS init: %e %e\n",GALAXY_DENSITY,wp.ngal);
 
+  //Read in the correlation data
+  wp_input();
+
   //If inputs are set, set the baseline values for correcting the galaxy density
   //to handle differences in assumed cosmology
   if(GALDENS_CCORR) {
     rmin = distance_redshift(REDSHIFT_MIN);
     rmax = distance_redshift(REDSHIFT_MAX);    
     volume = 4*PI/3.*(rmax*rmax*rmax-rmin*rmin*rmin);
-    printf("VOLUME: %e %e\n",volume,wp.ngal);
+    printf("VOLUME: %e %e %e\n",volume,wp.ngal,wp.ngal_err);
     GALAXY_COUNT=wp.ngal*volume;
     GALCOUNT_ERR=wp.ngal_err*volume;
   }
 
-  //Read in the correlation data
-  wp_input();
   //Read input M2N data if needed
   if(Task.m2n_minimize)
 	m2n_mass_input();
@@ -452,6 +453,7 @@ double chi2_wp(double *a)
   //Also issues when CVIR_FAC drops too low
   if(CVIR_FAC<0.05)return(1.0e7);
     
+
   //And if MaxCen drops too low
   if(HOD.pdfc==2 && HOD.MaxCen<0.01) return (1.0e7);
     
@@ -498,13 +500,13 @@ double chi2_wp(double *a)
       return(1e7);
     }
 
+
   if(HOD.free[0] || HOD.free[1])
     GALAXY_DENSITY=0;
 
   if(!HOD.color)
     set_HOD_params();
 	
-
   if(XCORR)
     set_HOD2_params();
 
@@ -529,6 +531,7 @@ double chi2_wp(double *a)
       //fprintf(stderr,"chi2ngal: %f %f\n",chi2ngal,wp.ngal_err);
       if(chi2ngal>1.0E3)return(chi2ngal);
     }
+
 
   if(ERROR_FLAG)
     {
