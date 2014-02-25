@@ -280,7 +280,11 @@ extern double
   HBIAS_C1, //halo bias parameters -- currently treated as cosmology parameters
   HBIAS_C2,
   HBIAS_D1,
-  HBIAS_D2;
+  HBIAS_D2,
+  REDSHIFT_MIN,
+  REDSHIFT_MAX,
+  GALAXY_COUNT,
+  GALCOUNT_ERR;
 
 extern int RESET_COSMOLOGY,
   RESET_KAISER,
@@ -312,7 +316,8 @@ extern int RESET_COSMOLOGY,
   XCORR,
   RESTART,
   USE_ERRORS,
-  DENSITY_DEPENDENCE;
+  DENSITY_DEPENDENCE,
+  GALDENS_CCORR;
 
 extern char RESTART_FILE[100];
 
