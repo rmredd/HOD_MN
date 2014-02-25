@@ -31,6 +31,7 @@ double chi2_m2n_mass(double *a);
 
 //Making sure this function is correctly available
 double wtheta_fit(double);
+double distance_redshift(double);
 
 /* The two functions below calculate the projected correlation
  * function from the HOD real-space correlation function at 
@@ -164,6 +165,7 @@ void wp_minimization(char *fname)
 {
   int n,niter,i,j;
   double *a,**pp,*yy,FTOL=1.0E-3,chi2min,chi2ngal,s1,dlogm,m;
+  double volume, rmin, rmax;
   FILE *fp;
   char aa[1000];
 
@@ -190,6 +192,18 @@ void wp_minimization(char *fname)
 
   printf("FNAME %s\n",Task.root_filename);
   printf("NGALS init: %e %e\n",GALAXY_DENSITY,wp.ngal);
+
+  //If inputs are set, set the baseline values for correcting the galaxy density
+  //to handle differences in assumed cosmology
+  if(GALDENS_CCORR) {
+    rmin = distance_redshift(REDSHIFT_MIN);
+    rmax = distance_redshift(REDSHIFT_MAX);    
+    volume = 4*PI/3.*(rmax*rmax*rmax-rmin*rmin*rmin);
+    GALAXY_COUNT=GALAXY_DENSITY*volume;
+    GALCOUNT_ERR=GALDENS_ERR*volume;
+  }
+
+  //Read in the correlation data
   wp_input();
   //Read input M2N data if needed
   if(Task.m2n_minimize)
@@ -494,6 +508,16 @@ double chi2_wp(double *a)
     set_HOD2_params();
 
   //fprintf(stderr,"I am testing 1 2 3...\n");
+
+  //If we're correcting the number density, do so
+  double volume;
+  if(GALDENS_CCORR) {
+    rmin = distance_redshift(REDSHIFT_MIN);
+    rmax = distance_redshift(REDSHIFT_MAX);  
+    volume = 4*PI/3.*(rmax*rmax*rmax-rmin*rmin*rmin);
+    wp.ngal = GALAXY_COUNT/volume;
+    wp.ngal_err = GALCOUNT_ERR/volume;
+  }
 
   //default to zero in order to add safely elsewhere
   chi2ngal = 0;
