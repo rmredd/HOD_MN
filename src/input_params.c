@@ -558,7 +558,19 @@ void read_parameter_file(char *fname)
   addr[nt]=&Task.angular_xi;
   id[nt++]=INT;
   Task.angular_xi = 0;
-  
+
+  /* Input parameters for correctly handling redshift range for number density
+   */
+  strcpy(tag[nt],"REDSHIFT_MIN");
+  addr[nt]=&REDSHIFT_MIN;
+  id[nt++]=DOUBLE;
+  REDSHIFT_MIN=-1;
+
+  strcpy(tag[nt],"REDSHIFT_MAX");
+  addr[nt]=&REDSHIFT_MAX;
+  id[nt++]=DOUBLE;
+  REDSHIFT_MAX=-1;
+
   if((fd=fopen(fname,"r")))
     {
       nn=filesize(fd);
@@ -792,6 +804,9 @@ void read_parameter_file(char *fname)
       if(!strcmp(tag[i],"cvir"))continue;
       if(!strcmp(tag[i],"massfunc"))continue;
       if(!strcmp(tag[i],"angular_xi"))continue;
+
+      if(!strcmp(tag[i],"REDSHIFT_MIN"))continue;
+      if(!strcmp(tag[i],"REDSHIFT_MAX"))continue;
 
       if(!strcmp(tag[i],"FIT_WTHETA"))continue;
 

@@ -52,7 +52,11 @@ double GAMMA=0.2,         /* Shape parameter of EBW power spectrum */
   HBIAS_C1=1.17,          /* Scale-dep halo bias param c1 */
   HBIAS_C2=0.69,          /* Scale-dep halo bias param c2 */
   HBIAS_D1=1.49,          /* Scale-dep halo bias param d1 */
-  HBIAS_D2=2.09;          /* Scale-dep halo bias param d2 */
+  HBIAS_D2=2.09,          /* Scale-dep halo bias param d2 */
+  REDSHIFT_MIN=-1.,       /* Minimum redshift for sky sample */
+  REDSHIFT_MAX=-1.,       /* Maximum redshift for sky sample */
+  GALAXY_COUNT=0.,        /* Calculated number of galaxies over the whole sky */
+  GALCOUNT_ERR=0.;        /* Calculated error in number of galaxies over entire sky */
 
 int ITRANS=4,             /* Type of transfer function to be used */
   RESET_KAISER=0,         /* Flag to reset tabulated Kaiser distortion quantities */
