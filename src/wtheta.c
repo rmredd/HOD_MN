@@ -1,3 +1,4 @@
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -25,10 +26,67 @@ struct WTH {
    Note that this version is dependent on the wp struct from header.h having already had data put into it
    --RMR
  */
-double wtheta_fit(double theta) 
+
+//New version for attempted debugging purposes
+double wtheta_fit(double theta_degrees)
+{ 
+  //variable declarations
+  double rmin, rmax, zmin, zmax, rad, z, dz, r, dr, Deltar, theta, s1, s2, s3;
+  int i, j, nrad=500;
+  static int flag = 1, ntable;
+
+  //Convert from degrees to radians
+  theta = PI/180.*theta_degrees;
+
+  //Sanity check -- no n(z) data, print warning and return 0
+  if(wp.np_nz==0)
+    {
+      fprintf(stderr,"WARNING: No n(z) data, impossible to obtain w(theta)\n");
+      return 0;
+    }
+  ntable = wp.np_nz;
+
+  wth.theta=theta;
+
+  //Get redshift range of n(z)
+  dz = wp.z[2]-wp.z[1];
+  zmin = wp.z[1] - dz/2.;
+  zmax = wp.z[wp.np_nz] + dz/2.;
+
+  //Truncating to 40 Mpc/h as default
+  Deltar = wp.pi_max;
+  //Setting the los integration element
+  dr = Deltar/nrad;
+
+  //Zeroing the variables we're using for integrations
+  s1 = s2 = 0;
+
+  //if(theta_degrees < 5e-3) printf("c/H0: %f\n",c_on_H0);
+  //Run the loop over redshift bins
+  for(i=0; i<wp.np_nz; i++) {
+    s3 = 0;
+    z = zmin+dz/2.+i*dz;
+    rad = distance_redshift(z)/HUBBLE;
+
+    //LOS integration
+    for(j=0; j<nrad; j++) {
+      r = sqrt(dr*dr*(j+0.5)*(j+0.5) + rad*rad*theta*theta);
+      s3 += dr*(one_halo_real_space(r) + two_halo_real_space(r));
+    }
+
+    //Now run the redshift integration
+    s1 += 2/c_on_H0*HUBBLE*wp.nz[i]*wp.nz[i]*s3*dz;
+    s2 += wp.nz[i]*dz;
+    
+  }
+  
+  return(s1/s2/s2);
+}
+
+double wtheta_fit_old(double theta_degrees) 
 { double r1, r2, z1, z2, z;
   
-  double rmin, rmax, dr, Deltar, pz, s1, zmin, zmax, rad, drdz, omega_temp, s2, w;
+  double rmin, rmax, dr, Deltar, pz, s1, zmin, zmax, rad, drdz, omega_temp, s2, w, theta;
   int nrad=200, i;
 
   
@@ -37,7 +95,7 @@ double wtheta_fit(double theta)
   static int flag = 1, ntable;
 
   // convert from degrees to radians!
-  theta *= PI/180.0;
+  theta = PI/180.0*theta_degrees;
 
   //Sanity check -- if n(z) data doesn't exist, print a warning and return 0
   if(wp.np_nz==0)
@@ -59,6 +117,8 @@ double wtheta_fit(double theta)
 	{
 	  zquadri[i] = wp.z[i];
 	  nquadri[i] = log(wp.nz[i]);
+	  //TEST ONLY
+	  //nquadri[i] = 1.;
 	}
       spline(zquadri,nquadri,ntable,1.0E+30,1.0E+30,yquadri);
     }
@@ -66,16 +126,21 @@ double wtheta_fit(double theta)
   wth.theta = theta;
   zmin = wp.zmin;
   zmax = wp.zmax;
-  if (zmin < zquadri[1]) zmin = zquadri[1];
-  if (zmax > zquadri[ntable]) zmax = zquadri[ntable];
   
+  dz1 = zquadri[2]-zquadri[1];
+  zmin = zquadri[1] - dz1/2.;
+  zmax = zquadri[ntable] + dz1/2.;
+  //zmin = 0.15; zmax = 0.25;
+
   rmin = distance_redshift(zmin);
   rmax = distance_redshift(zmax);
+
+  fprintf(stderr,"%f %f %f %f %f %f\n",zmin,zmax,theta_degrees,theta,rmin*theta,rmax*theta);
 
   //fmuh(OMEGA_M);
 
   dr = (rmax - rmin)/nrad;
-  Deltar = rmax - rmin;
+  //Deltar = (rmax - rmin)/4.;
 
   // truncating to 40 Mpc/h as a default -- may be input
   Deltar = wp.pi_max;
@@ -85,9 +150,10 @@ double wtheta_fit(double theta)
 
   s1 = s2 = 0;
 
-  for(i=0;i<nrad;++i)
+  
+  for(i=0;i<=nrad;++i)
     {
-      rad = (i-0.5)*dr + rmin;
+      rad = i*dr + rmin;
       wth.rad = rad;
       z = redshift_distance(rad);
           
@@ -95,9 +161,15 @@ double wtheta_fit(double theta)
       pz = exp(pz)*exp(pz);
 
       drdz = c_on_H0*c_on_H0/(OMEGA_M*(1+z)*(1+z)*(1+z)+(1-OMEGA_M));
+      //drdz = 1.;
       s1 += 2*qromo(func_wth1,0.0,Deltar,midpnt)*pz/drdz*dr;
       s2 += sqrt(pz/drdz)*dr;
-    }
+
+      if(theta_degrees > 0.1 && theta_degrees < 0.11) {
+	fprintf(stderr,"    %f %f %f %f %f %f %f %f\n",z,rad,theta*rad,s1,s2*s2,s1/s2/s2,sqrt(pz),c_on_H0);
+      }
+  }
+
   w = s1/s2/s2;
   return w;
 }
@@ -206,6 +278,7 @@ double func_wth1(double rlos)
   r = sqrt(rlos*rlos + wth.theta*wth.theta*wth.rad*wth.rad);
   //return one_halo_real_space(r);
   //return two_halo_real_space(r);
+  
   return one_halo_real_space(r) + two_halo_real_space(r);
   return one_halo_real_space(r) + linear_kaiser_distortion(r,rlos);
 }

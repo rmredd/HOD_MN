@@ -174,7 +174,7 @@ muh(Task.MCMC);
 	wp.zmin = wp.z[1];
 	wp.zmax = wp.z[wp.np_nz];
 	fprintf(stderr,"Done reading %d lines from [%s]\n",wp.np_nz,wp.fname_nz);
-	fprintf(stderr,"%e %e\n",wp.z[1],wp.nz[1]);
+	//fprintf(stderr,"%e %e\n",wp.z[1],wp.nz[1]);
       }
 
       sprintf(fname,"%s.wtheta",Task.root_filename);
@@ -182,6 +182,7 @@ muh(Task.MCMC);
       dr = (log(10.)-log(0.001))/49.0; //This is actually dlntheta
       for(i=0; i<50; ++i) {
 	r = exp(i*dr + log(0.001));
+	//printf("TEST: %d %f\n",i,r);
 	dx1 = wtheta_fit(r);
 	fprintf(fp,"%f %f\n",r,dx1);
 	fflush(fp);
