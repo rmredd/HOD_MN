@@ -66,7 +66,7 @@ double wtheta_fit(double theta_degrees)
   for(i=0; i<wp.np_nz; i++) {
     s3 = 0;
     z = zmin+dz/2.+i*dz;
-    rad = distance_redshift(z)/HUBBLE;
+    rad = distance_redshift(z);
 
     //LOS integration
     for(j=0; j<nrad; j++) {
@@ -75,7 +75,7 @@ double wtheta_fit(double theta_degrees)
     }
 
     //Now run the redshift integration
-    s1 += 2/c_on_H0*HUBBLE*wp.nz[i]*wp.nz[i]*s3*dz;
+    s1 += 2/c_on_H0*wp.nz[i]*wp.nz[i]*s3*dz;
     s2 += wp.nz[i]*dz;
     
   }
