@@ -75,7 +75,7 @@ double wtheta_fit(double theta_degrees)
     }
 
     //Now run the redshift integration
-    s1 += 2/c_on_H0*wp.nz[i]*wp.nz[i]*s3*dz;
+    s1 += 2/c_on_H0*sqrt( OMEGA_M*(1+z)*(1+z)*(1+z) + (1-OMEGA_M) )*wp.nz[i]*wp.nz[i]*s3*dz;
     s2 += wp.nz[i]*dz;
     
   }
