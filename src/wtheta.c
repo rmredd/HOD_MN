@@ -14,6 +14,7 @@
 double func_dr1(double z);
 double func_wth1(double r);
 double func_wth1_tabulated(double r);
+double func_wth_test(double r);
 double distance_redshift(double z);
 double redshift_distance(double r);
 
@@ -28,7 +29,7 @@ struct WTH {
  */
 
 //New version for attempted debugging purposes
-double wtheta_fit(double theta_degrees)
+double wtheta_fit_test(double theta_degrees)
 { 
   //variable declarations
   double rmin, rmax, zmin, zmax, rad, z, dz, r, dr, Deltar, theta, s1, s2, s3;
@@ -54,7 +55,8 @@ double wtheta_fit(double theta_degrees)
   zmax = wp.z[wp.np_nz] + dz/2.;
 
   //Truncating to 40 Mpc/h as default
-  Deltar = wp.pi_max;
+  //Deltar = wp.pi_max;
+  Deltar = 90.;
   //Setting the los integration element
   dr = Deltar/nrad;
 
@@ -83,96 +85,60 @@ double wtheta_fit(double theta_degrees)
   return(s1/s2/s2);
 }
 
-double wtheta_fit_old(double theta_degrees) 
-{ double r1, r2, z1, z2, z;
-  
-  double rmin, rmax, dr, Deltar, pz, s1, zmin, zmax, rad, drdz, omega_temp, s2, w, theta;
-  int nrad=200, i;
-
-  
-  static double *nquadri,*zquadri,*yquadri;
-  double dz1,dz2;
+//w(theta) function purely for testing -- this uses a pure power law and top-hat n(z) for testing
+double wtheta_fit(double theta_degrees)
+{ 
+  //variable declarations
+  double rmin, rmax, zmin, zmax, rad, z, dz, r, dr, Deltar, theta, s1, s2, s3;
+  int i, j, nz, nrad=500;
   static int flag = 1, ntable;
 
-  // convert from degrees to radians!
-  theta = PI/180.0*theta_degrees;
+  //Convert from degrees to radians
+  theta = PI/180.*theta_degrees;
 
-  //Sanity check -- if n(z) data doesn't exist, print a warning and return 0
-  if(wp.np_nz==0)
-    {
-      fprintf(stderr,"WARNING: No n(z) data, impossible to obtain w(theta)\n");
-      return 0;
-    }
+  wth.theta=theta;
 
-  // Set up the spline if necessary
-  if(flag)
-    {
-      flag = 0;
-      ntable = wp.np_nz;
-      zquadri = dvector(1,ntable);
-      nquadri = dvector(1,ntable);
-      yquadri = dvector(1,ntable);
-      
-      for(i=1;i<=ntable;++i)
-	{
-	  zquadri[i] = wp.z[i];
-	  nquadri[i] = log(wp.nz[i]);
-	  //TEST ONLY
-	  //nquadri[i] = 1.;
-	}
-      spline(zquadri,nquadri,ntable,1.0E+30,1.0E+30,yquadri);
-    }
+  //Get redshift range of n(z)
+  dz = wp.z[2]-wp.z[1];
+  zmin = wp.z[1] - dz/2.;
+  zmax = wp.z[wp.np_nz] + dz/2.;
+  /*nz = 200;
+  zmin = 0.1;
+  zmax = 0.2;
+  dz = (zmax-zmin)/nz;
+  double * nofz = dvector(1,nz);
+  double * myz = dvector(1,nz);
+  for(i=1; i<=nz; i++) {
+    myz[i] = zmin+i*dz+dz/2.;
+    nofz[i] = 1./(zmax-zmin);
+    }*/
 
-  wth.theta = theta;
-  zmin = wp.zmin;
-  zmax = wp.zmax;
-  
-  dz1 = zquadri[2]-zquadri[1];
-  zmin = zquadri[1] - dz1/2.;
-  zmax = zquadri[ntable] + dz1/2.;
-  //zmin = 0.15; zmax = 0.25;
+  //Truncating to 40 Mpc/h as default
+  //Deltar = wp.pi_max;
+  Deltar = 90.;
 
-  rmin = distance_redshift(zmin);
-  rmax = distance_redshift(zmax);
-
-  fprintf(stderr,"%f %f %f %f %f %f\n",zmin,zmax,theta_degrees,theta,rmin*theta,rmax*theta);
-
-  //fmuh(OMEGA_M);
-
-  dr = (rmax - rmin)/nrad;
-  //Deltar = (rmax - rmin)/4.;
-
-  // truncating to 40 Mpc/h as a default -- may be input
-  Deltar = wp.pi_max;
-
-  pz = 1.0/(zmax - zmin);
-  pz *= pz;
-
+  //Zeroing the variables we're using for integrations
   s1 = s2 = 0;
 
-  
-  for(i=0;i<=nrad;++i)
-    {
-      rad = i*dr + rmin;
-      wth.rad = rad;
-      z = redshift_distance(rad);
-          
-      splint(zquadri,nquadri,yquadri,ntable,z,&pz);
-      pz = exp(pz)*exp(pz);
+  //if(theta_degrees < 5e-3) printf("c/H0: %f\n",c_on_H0);
+  //Run the loop over redshift bins
+  for(i=1; i<=wp.np_nz; i++) {
+    //z = myz[i];
+    z = wp.z[i];
+    wth.rad = distance_redshift(z);
 
-      drdz = c_on_H0*c_on_H0/(OMEGA_M*(1+z)*(1+z)*(1+z)+(1-OMEGA_M));
-      //drdz = 1.;
-      s1 += 2*qromo(func_wth1,0.0,Deltar,midpnt)*pz/drdz*dr;
-      s2 += sqrt(pz/drdz)*dr;
-
-      if(theta_degrees > 0.1 && theta_degrees < 0.11) {
-	fprintf(stderr,"    %f %f %f %f %f %f %f %f\n",z,rad,theta*rad,s1,s2*s2,s1/s2/s2,sqrt(pz),c_on_H0);
-      }
+    //qromo gives LOS integration
+    //Now run the redshift integration
+    //Test version -- power law only
+    //s1 += 2/c_on_H0*sqrt( OMEGA_M*(1+z)*(1+z)*(1+z) + (1-OMEGA_M) )*nofz[i]*nofz[i]*qromo(func_wth_test,0.0,Deltar,midpnt)*dz;
+    s1 += 2/c_on_H0*sqrt( OMEGA_M*(1+z)*(1+z)*(1+z) + (1-OMEGA_M) )*wp.nz[i]*wp.nz[i]*qromo(func_wth1,0.0,Deltar,midpnt)*dz;
+    s2 += wp.nz[i]*dz;
+    
   }
-
-  w = s1/s2/s2;
-  return w;
+  
+  return(s1/s2/s2);
 }
+
 
 double wtheta(double theta)
 {
@@ -281,6 +247,13 @@ double func_wth1(double rlos)
   
   return one_halo_real_space(r) + two_halo_real_space(r);
   return one_halo_real_space(r) + linear_kaiser_distortion(r,rlos);
+}
+
+//Test version of xi(r) for integration -- outputs a power law
+double func_wth_test(double rlos) {
+  double r;
+  r = sqrt(rlos*rlos + wth.theta*wth.theta*wth.rad*wth.rad);
+  return 80./r/r;
 }
 
 double func_wth1_tabulated(double rlos)

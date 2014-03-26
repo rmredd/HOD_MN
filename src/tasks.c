@@ -34,6 +34,9 @@ double func_nsatsum(double);
 double func_ntotsum(double);
 
 double wtheta_fit(double);
+double wtheta_fit_test(double);
+
+double bias(double);
 
 void tasks(int argc, char **argv)
 {
@@ -184,7 +187,7 @@ muh(Task.MCMC);
 	r = exp(i*dr + log(0.001));
 	//printf("TEST: %d %f\n",i,r);
 	dx1 = wtheta_fit(r);
-	fprintf(fp,"%f %f\n",r,dx1);
+	fprintf(fp,"%f %f %f\n",r,dx1,wtheta_fit_test(r));
 	fflush(fp);
       }
       fclose(fp);
@@ -348,6 +351,13 @@ muh(Task.MCMC);
 	}
     }
 
+
+  /*
+   * Printing out the mass-dependent halo bias
+   */
+  if(Task.print_bias) {
+    
+  }
 
   /* This calls functions to tabulate and output the full two-dimensional
    * correlation function in redshift space, xi(r_sigma, r_pi). It is outputted

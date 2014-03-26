@@ -559,6 +559,12 @@ void read_parameter_file(char *fname)
   id[nt++]=INT;
   Task.angular_xi = 0;
 
+  //Whether to print the bias(M)
+  strcpy(tag[nt],"print_bias");
+  addr[nt]=&Task.print_bias;
+  id[nt++]=INT;
+  Task.print_bias = 0;
+
   /* Input parameters for correctly handling redshift range for number density
    */
   strcpy(tag[nt],"REDSHIFT_MIN");
@@ -804,6 +810,7 @@ void read_parameter_file(char *fname)
       if(!strcmp(tag[i],"cvir"))continue;
       if(!strcmp(tag[i],"massfunc"))continue;
       if(!strcmp(tag[i],"angular_xi"))continue;
+      if(!strcmp(tag[i],"print_bias"))continue;
 
       if(!strcmp(tag[i],"REDSHIFT_MIN"))continue;
       if(!strcmp(tag[i],"REDSHIFT_MAX"))continue;

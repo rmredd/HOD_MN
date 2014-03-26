@@ -566,6 +566,7 @@ extern struct perform_tasks {
   char mcmcfilename[200];  //Output file for the MCMC chain
   int angular_xi; //flag for outputing w(theta)
   int FIT_WTHETA; //Swith to fitting w(theta) from wp(rp)
+  int print_bias; //flag for outputting bias(M)
 } Task;
 
 
