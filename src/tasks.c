@@ -354,9 +354,19 @@ muh(Task.MCMC);
 
   /*
    * Printing out the mass-dependent halo bias
+   * 1 - M
+   * 2 - b(M)
    */
   if(Task.print_bias) {
-    
+    sprintf(fname,"%s.halo_bias",Task.root_filename);
+    fp2 = fopen(fname,"w");
+
+    for(i=0; i<36; i++) {
+      x1 = pow(10.,12+i*0.1);
+      fprintf(fp2,"%e %e\n",x1,bias(x1));
+    }
+
+    fclose(fp2);
   }
 
   /* This calls functions to tabulate and output the full two-dimensional
