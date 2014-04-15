@@ -77,7 +77,8 @@ void mcmc_minimization()
 {
   double stepfac=1;
   double error=1,tolerance=0,**cov1,**tmp,*a,*avg1,chi2,chi2prev,
-    **evect,*eval,*aprev,*atemp,**tmp1,*opar,x1,fsat,**chain,*start_dev,*eval_prev;
+    **evect,*eval,*aprev,*atemp,**tmp1,*opar,x1,fsat,**chain,*start_dev,*eval_prev, 
+    rmin, rmax, volume;
   int n,i,j,k,nrot,niter=0,count=0,imax_chain=100000,NSTEP=50,NSTEP_MAX=10000,convergence=0;
   long IDUM=-555;
 
@@ -99,6 +100,15 @@ void mcmc_minimization()
 
   if(!ThisTask)printf("ESYS %f %d\n",wp.esys,MCMC);
   wp_input();
+  ///Need a section for handling the cosmology corrections to volume, if requested
+  if(GALDENS_CCORR) {
+    rmin = distance_redshift(REDSHIFT_MIN);
+    rmax = distance_redshift(REDSHIFT_MAX);    
+    volume = 4*PI/3.*(rmax*rmax*rmax-rmin*rmin*rmin);
+    printf("VOLUME: %e %e %e\n",volume,wp.ngal,wp.ngal_err);
+    GALAXY_COUNT=wp.ngal*volume;
+    GALCOUNT_ERR=wp.ngal_err*volume;
+  }
   if(Task.m2n_minimize)
 	m2n_mass_input();
 
