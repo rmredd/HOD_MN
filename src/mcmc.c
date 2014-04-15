@@ -24,6 +24,9 @@ double chi2_m2n_wrapper(double *a);
 void mcmc_restart2(double *start_dev, int np);
 int mcmc_restart3(double **chain, int n, double *chi2_prev, int *iweight);
 
+//Needed to handle number density cosmology corrections
+double distance_redshift(double);
+
 int USE_IWEIGHT = 0;
 
 /**************************************

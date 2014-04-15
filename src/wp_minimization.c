@@ -528,7 +528,7 @@ double chi2_wp(double *a)
   if(HOD.free[0])
     {
       chi2ngal = (GALAXY_DENSITY-wp.ngal)*(GALAXY_DENSITY-wp.ngal)/wp.ngal_err/wp.ngal_err;
-      //fprintf(stderr,"chi2ngal: %f %f\n",chi2ngal,wp.ngal_err);
+      fprintf(stderr,"chi2ngal: %f %f %f\n",chi2ngal,wp.ngal,wp.ngal_err);
       if(chi2ngal>1.0E3)return(chi2ngal);
     }
 
